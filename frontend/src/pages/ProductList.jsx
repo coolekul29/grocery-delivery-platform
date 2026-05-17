@@ -3,29 +3,41 @@ import axios from "axios";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5001/api/products"
-      );
+const fetchProducts = async () => {
+  try {
+    setError("");
 
-      setProducts(response.data);
+    const response = await axios.get(
+      "http://localhost:5001/api/products"
+    );
+
+        setProducts(response.data);
 
     } catch (error) {
-      console.error("Error fetching products:", error);
+        console.error("Error fetching products:", error);
+
+        setError(
+        "Unable to load products. Please try again later."
+        );
     }
-  };
+    };
 
   return (
     <div className="container mt-5">
       <h2 className="mb-4">Product Listings</h2>
 
       <div className="row">
+        {error && (
+        <div className="alert alert-danger">
+            {error}
+        </div>
+        )}
         {products.length === 0 ? (
             <div className="alert alert-info">
                 No products available at the moment.
