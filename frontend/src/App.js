@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Tasks from './pages/Tasks';
 import AddProduct from "./pages/AddProduct";
+import ProductList from "./pages/ProductList";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/products" element={<ProductList />} />
       </Routes>
     </Router>
   );
