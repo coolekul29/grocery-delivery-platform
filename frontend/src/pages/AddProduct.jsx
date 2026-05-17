@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const AddProduct = () => {
   const [productData, setProductData] = useState({
@@ -58,16 +59,44 @@ const AddProduct = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+  if (!validateForm()) {
+    return;
+  }
 
-    console.log("Validated Product Data:", productData);
-    alert("Product form validation passed.");
-  };
+  try {
+    const response = await axios.post(
+      "http://localhost:5001/api/products",
+      {
+        name: productData.name,
+        description: productData.description,
+        price: productData.price,
+        category: productData.category,
+        stock: productData.stock,
+      }
+    );
+
+    console.log("Product Added:", response.data);
+
+    alert("Product added successfully!");
+
+    setProductData({
+      name: "",
+      description: "",
+      price: "",
+      category: "",
+      stock: "",
+      image: null,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    alert("Failed to add product.");
+  }
+};
 
   return (
     <div className="container mt-5">
