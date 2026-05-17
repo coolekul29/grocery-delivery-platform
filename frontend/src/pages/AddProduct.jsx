@@ -67,33 +67,33 @@ const handleSubmit = async (e) => {
   }
 
   try {
+    const formData = new FormData();
+
+    formData.append("name", productData.name);
+    formData.append("description", productData.description);
+    formData.append("price", productData.price);
+    formData.append("category", productData.category);
+    formData.append("stock", productData.stock);
+
+    if (productData.image) {
+      formData.append("image", productData.image);
+    }
+
     const response = await axios.post(
       "http://localhost:5001/api/products",
+      formData,
       {
-        name: productData.name,
-        description: productData.description,
-        price: productData.price,
-        category: productData.category,
-        stock: productData.stock,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
     );
 
     console.log("Product Added:", response.data);
-
     alert("Product added successfully!");
-
-    setProductData({
-      name: "",
-      description: "",
-      price: "",
-      category: "",
-      stock: "",
-      image: null,
-    });
 
   } catch (error) {
     console.error(error);
-
     alert("Failed to add product.");
   }
 };

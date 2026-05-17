@@ -3,9 +3,19 @@ const Product = require("../models/Product");
 // CREATE product
 exports.createProduct = async (req, res) => {
   try {
-    const { name, price, stock } = req.body;
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+    const { name, description, price, category, stock } = req.body;
 
-    const product = new Product({ name, price, stock });
+    const product = new Product({
+      name,
+      description,
+      price,
+      category,
+      stock,
+      image: req.file ? `/uploads/${req.file.filename}` : "",
+    });
+
     await product.save();
 
     res.status(201).json(product);
