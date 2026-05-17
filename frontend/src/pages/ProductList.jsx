@@ -51,6 +51,7 @@ const fetchProducts = async () => {
                         <img
                         src={`http://localhost:5001${product.image}`}
                         alt={product.name}
+                        loading="lazy"
                         className="card-img-top"
                         style={{
                             height: "250px",
