@@ -11,10 +11,12 @@ const Register = () => {
     password: '',
     confirmPassword: '',
   });
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (
       !formData.name ||
       !formData.email ||
@@ -23,21 +25,27 @@ const Register = () => {
       !formData.password ||
       !formData.confirmPassword
     ) {
-      alert("Please fill in all fields.");
+      alert('Please fill in all fields.');
       return;
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailPattern.test(formData.email)) {
-      alert("Please enter a valid email address.");
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      alert('Password must be at least 6 characters.');
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match.");
+      alert('Passwords do not match.');
       return;
     }
+
     try {
       await axiosInstance.post('/api/auth/register', formData);
       alert('Registration successful. Please log in.');
@@ -51,6 +59,7 @@ const Register = () => {
     <div className="max-w-md mx-auto mt-20">
       <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
         <h1 className="text-2xl font-bold mb-4 text-center">Register</h1>
+
         <input
           type="text"
           placeholder="Name"
@@ -58,6 +67,7 @@ const Register = () => {
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
+
         <input
           type="email"
           placeholder="Email"
@@ -65,24 +75,23 @@ const Register = () => {
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
+
         <input
           type="text"
           placeholder="Phone Number"
           value={formData.phone}
-          onChange={(e) =>
-            setFormData({ ...formData, phone: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
+
         <input
           type="text"
           placeholder="Delivery Address"
           value={formData.address}
-          onChange={(e) =>
-            setFormData({ ...formData, address: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
+
         <input
           type="password"
           placeholder="Password"
@@ -95,6 +104,7 @@ const Register = () => {
           }
           className="w-full mb-4 p-2 border rounded"
         />
+
         <input
           type="password"
           placeholder="Confirm Password"
@@ -107,6 +117,7 @@ const Register = () => {
           }
           className="w-full mb-4 p-2 border rounded"
         />
+
         <button type="submit" className="w-full bg-green-600 text-white p-2 rounded">
           Register
         </button>
