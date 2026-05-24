@@ -4,21 +4,27 @@ import axios from "axios";
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [search, category]);
 
   const fetchProducts = async () => {
     try {
       setError("");
 
-      const response = await axios.get("http://localhost:5001/api/products");
+      const response = await axios.get("http://localhost:5001/api/products", {
+        params: {
+          search,
+          category,
+        },
+      });
 
       setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
-
       setError("Unable to load products. Please try again later.");
     }
   };
@@ -49,12 +55,39 @@ const ProductList = () => {
     <div className="container mt-5">
       <h2 className="mb-4">Product Listings</h2>
 
+      <div className="row mb-4">
+        <div className="col-md-8 mb-2">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search products by name..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="col-md-4 mb-2">
+          <select
+            className="form-select"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            <option value="Fruits">Fruits</option>
+            <option value="Vegetables">Vegetables</option>
+            <option value="Meat">Meat</option>
+            <option value="Dairy">Dairy</option>
+            <option value="Bakery">Bakery</option>
+          </select>
+        </div>
+      </div>
+
       <div className="row">
         {error && <div className="alert alert-danger">{error}</div>}
 
         {products.length === 0 ? (
           <div className="alert alert-info">
-            No products available at the moment.
+            No products found. Please try another search or filter.
           </div>
         ) : (
           <div className="row">
