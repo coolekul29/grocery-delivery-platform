@@ -5,6 +5,7 @@ exports.createProduct = async (req, res) => {
   try {
     console.log("BODY:", req.body);
     console.log("FILE:", req.file);
+
     const { name, description, price, category, stock } = req.body;
 
     const product = new Product({
@@ -24,10 +25,23 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// GET all products
+// GET all products with optional search and category filter
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const { search, category } = req.query;
+
+    const query = {};
+
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
+    const products = await Product.find(query);
+
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -37,9 +51,17 @@ exports.getProducts = async (req, res) => {
 // UPDATE product
 exports.updateProduct = async (req, res) => {
   try {
+    const updateData = {
+      ...req.body,
+    };
+
+    if (req.file) {
+      updateData.image = `/uploads/${req.file.filename}`;
+    }
+
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       { new: true }
     );
 
