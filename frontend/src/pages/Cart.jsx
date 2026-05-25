@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001"
+
 function Cart({ cart, setCart }) {
   const navigate = useNavigate();
   const groupedCart = cart.reduce((items, item) => {
@@ -65,7 +67,7 @@ function Cart({ cart, setCart }) {
       0
     );
 
-    const response = await fetch("http://localhost:5001/api/orders", {
+    const response = await fetch(`${API_BASE_URL}/api/orders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

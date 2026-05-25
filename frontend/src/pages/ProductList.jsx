@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001"
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -7,15 +9,11 @@ const ProductList = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
 
-  useEffect(() => {
-    fetchProducts();
-  }, [search, category]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setError("");
 
-      const response = await axios.get("http://localhost:5001/api/products", {
+      const response = await axios.get(`${API_BASE_URL}/api/products`, {
         params: {
           search,
           category,
@@ -27,7 +25,11 @@ const ProductList = () => {
       console.error("Error fetching products:", error);
       setError("Unable to load products. Please try again later.");
     }
-  };
+  }, [search, category]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleDeleteProduct = async (productId) => {
     const confirmDelete = window.confirm(
@@ -39,7 +41,7 @@ const ProductList = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5001/api/products/${productId}`);
+      await axios.delete(`${API_BASE_URL}/api/products/${productId}`);
 
       alert("Product deleted successfully.");
 
@@ -96,7 +98,7 @@ const ProductList = () => {
                 <div className="card h-100 shadow-sm">
                   {product.image && (
                     <img
-                      src={`http://localhost:5001${product.image}`}
+                      src={`${API_BASE_URL}${product.image}`}
                       alt={product.name}
                       loading="lazy"
                       className="card-img-top"
