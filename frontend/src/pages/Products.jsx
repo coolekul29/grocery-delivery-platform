@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001"
+
 function Products({ cart, setCart }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5001/api/products")
+    axios.get(`${API_BASE_URL}/api/products`)
       .then(res => {
         console.log(res.data); // debug
         setProducts(res.data);

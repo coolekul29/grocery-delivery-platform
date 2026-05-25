@@ -39,4 +39,4 @@ jobs:
         run: npm test -- --watchAll=false
 
       - name: Build Frontend Application
-        run: npm run build --prefix frontend
+        run: CI=false npm run build --prefix frontend

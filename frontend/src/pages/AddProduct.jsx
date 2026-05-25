@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001"
+
 const AddProduct = () => {
   const [productData, setProductData] = useState({
     name: "",
@@ -80,7 +82,7 @@ const handleSubmit = async (e) => {
     }
 
     const response = await axios.post(
-      "http://localhost:5001/api/products",
+      `${API_BASE_URL}/api/products`,
       formData,
       {
         headers: {
