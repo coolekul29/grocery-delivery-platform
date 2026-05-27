@@ -1,22 +1,32 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../axiosConfig';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axiosInstance from "../axiosConfig";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    password: '',
-    confirmPassword: '',
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    password: "",
+    confirmPassword: "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Update form values
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
+  // Check form inputs
+  const validateForm = () => {
     if (
       !formData.name ||
       !formData.email ||
@@ -25,103 +35,224 @@ const Register = () => {
       !formData.password ||
       !formData.confirmPassword
     ) {
-      alert('Please fill in all fields.');
-      return;
+      return "Please fill in all fields.";
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailPattern.test(formData.email)) {
-      alert('Please enter a valid email address.');
-      return;
+      return "Please enter a valid email address.";
     }
 
     if (formData.password.length < 6) {
-      alert('Password must be at least 6 characters.');
-      return;
+      return "Password must be at least 6 characters.";
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match.');
+      return "Passwords do not match.";
+    }
+
+    return "";
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const validationError = validateForm();
+
+    if (validationError) {
+      setErrorMessage(validationError);
       return;
     }
 
     try {
-      await axiosInstance.post('/api/auth/register', formData);
-      alert('Registration successful. Please log in.');
-      navigate('/login');
+      setLoading(true);
+      setErrorMessage("");
+
+      await axiosInstance.post("/api/auth/register", formData);
+
+      alert("Registration successful. Please log in.");
+
+      // Go to login page after registration
+      navigate("/login");
     } catch (error) {
-      alert('Registration failed. Please try again.');
+      console.error("Registration failed:", error);
+      setErrorMessage("Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20">
-      <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
-        <h1 className="text-2xl font-bold mb-4 text-center">Register</h1>
+    <div className="min-vh-100 bg-light">
+      <section
+        className="hero-section"
+        style={{
+          background: "linear-gradient(135deg, #1f9d67 0%, #2ecf9f 100%)",
+          minHeight: "calc(100vh - 80px)",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <div className="container">
+          <div className="row align-items-center py-5">
+            <div className="col-lg-5">
+              <p className="text-uppercase fw-semibold text-light mb-2">
+                Customer Registration
+              </p>
 
-        <input
-          type="text"
-          placeholder="Name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
+              <h1 className="display-4 fw-bold text-white mb-4">
+                Create Your Account
+              </h1>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
+              <p className="lead text-light mb-0">
+                Register to browse groceries, manage your cart, place orders,
+                and update your customer profile.
+              </p>
+            </div>
 
-        <input
-          type="text"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
+            <div className="col-lg-6 ms-auto">
+              <div className="card border-0 shadow-lg rounded-4">
+                <div className="card-body p-5">
+                  <div className="text-center mb-4">
+                    <h2 className="fw-bold mb-2">Register</h2>
 
-        <input
-          type="text"
-          placeholder="Delivery Address"
-          value={formData.address}
-          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
+                    <p className="text-muted mb-0">
+                      Create your grocery delivery account
+                    </p>
+                  </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              password: e.target.value,
-            })
-          }
-          className="w-full mb-4 p-2 border rounded"
-        />
+                  {errorMessage && (
+                    <div className="alert alert-danger shadow-sm">
+                      {errorMessage}
+                    </div>
+                  )}
 
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              confirmPassword: e.target.value,
-            })
-          }
-          className="w-full mb-4 p-2 border rounded"
-        />
+                  <form onSubmit={handleSubmit}>
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <label className="form-label fw-semibold">
+                          Full Name
+                        </label>
 
-        <button type="submit" className="w-full bg-green-600 text-white p-2 rounded">
-          Register
-        </button>
-      </form>
+                        <input
+                          type="text"
+                          name="name"
+                          placeholder="Enter your name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          className="form-control form-control-lg"
+                          required
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label fw-semibold">
+                          Phone Number
+                        </label>
+
+                        <input
+                          type="text"
+                          name="phone"
+                          placeholder="Enter phone number"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          className="form-control form-control-lg"
+                          required
+                        />
+                      </div>
+
+                      <div className="col-12">
+                        <label className="form-label fw-semibold">
+                          Email Address
+                        </label>
+
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="Enter your email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="form-control form-control-lg"
+                          required
+                        />
+                      </div>
+
+                      <div className="col-12">
+                        <label className="form-label fw-semibold">
+                          Delivery Address
+                        </label>
+
+                        <input
+                          type="text"
+                          name="address"
+                          placeholder="Enter delivery address"
+                          value={formData.address}
+                          onChange={handleChange}
+                          className="form-control form-control-lg"
+                          required
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label fw-semibold">
+                          Password
+                        </label>
+
+                        <input
+                          type="password"
+                          name="password"
+                          placeholder="Create password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className="form-control form-control-lg"
+                          required
+                        />
+                      </div>
+
+                      <div className="col-md-6">
+                        <label className="form-label fw-semibold">
+                          Confirm Password
+                        </label>
+
+                        <input
+                          type="password"
+                          name="confirmPassword"
+                          placeholder="Confirm password"
+                          value={formData.confirmPassword}
+                          onChange={handleChange}
+                          className="form-control form-control-lg"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="btn btn-success btn-lg w-100 fw-semibold mt-4"
+                    >
+                      {loading ? "Creating Account..." : "Register"}
+                    </button>
+                  </form>
+
+                  <div className="text-center mt-4">
+                    <p className="text-muted mb-0">
+                      Already have an account?{" "}
+                      <Link
+                        to="/login"
+                        className="text-success fw-semibold text-decoration-none"
+                      >
+                        Login
+                      </Link>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

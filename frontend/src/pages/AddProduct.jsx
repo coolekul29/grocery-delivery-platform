@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001"
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5001";
 
 const AddProduct = () => {
   const [productData, setProductData] = useState({
@@ -15,6 +15,7 @@ const AddProduct = () => {
 
   const [errors, setErrors] = useState({});
 
+  // Update input values
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -23,12 +24,14 @@ const AddProduct = () => {
       [name]: files ? files[0] : value,
     });
 
+    // Clear error when user types again
     setErrors({
       ...errors,
       [name]: "",
     });
   };
 
+  // Check required fields
   const validateForm = () => {
     const newErrors = {};
 
@@ -61,44 +64,49 @@ const AddProduct = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!validateForm()) {
-    return;
-  }
+    if (!validateForm()) return;
 
-  try {
-    const formData = new FormData();
+    try {
+      // Use FormData because product image can be uploaded
+      const formData = new FormData();
 
-    formData.append("name", productData.name);
-    formData.append("description", productData.description);
-    formData.append("price", productData.price);
-    formData.append("category", productData.category);
-    formData.append("stock", productData.stock);
+      formData.append("name", productData.name);
+      formData.append("description", productData.description);
+      formData.append("price", productData.price);
+      formData.append("category", productData.category);
+      formData.append("stock", productData.stock);
 
-    if (productData.image) {
-      formData.append("image", productData.image);
-    }
+      if (productData.image) {
+        formData.append("image", productData.image);
+      }
 
-    const response = await axios.post(
-      `${API_BASE_URL}/api/products`,
-      formData,
-      {
+      await axios.post(`${API_BASE_URL}/api/products`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
-    );
+      });
 
-    console.log("Product Added:", response.data);
-    alert("Product added successfully!");
+      alert("Product added successfully!");
 
-  } catch (error) {
-    console.error(error);
-    alert("Failed to add product.");
-  }
-};
+      // Clear form after product is added
+      setProductData({
+        name: "",
+        description: "",
+        price: "",
+        category: "",
+        stock: "",
+        image: null,
+      });
+
+      document.getElementById("imageFileInput").value = "";
+    } catch (error) {
+      console.error("Failed to add product:", error);
+      alert("Failed to add product.");
+    }
+  };
 
   return (
     <div className="container mt-5">
@@ -173,6 +181,7 @@ const handleSubmit = async (e) => {
           <label className="form-label">Product Image</label>
           <input
             type="file"
+            id="imageFileInput"
             className="form-control"
             name="image"
             onChange={handleChange}
