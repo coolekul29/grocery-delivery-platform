@@ -1,10 +1,9 @@
 const Product = require("../models/Product");
 
-// CREATE product
 exports.createProduct = async (req, res) => {
   try {
-    console.log("BODY:", req.body);
-    console.log("FILE:", req.file);
+    console.log("Body:", req.body);
+    console.log("File:", req.file);
 
     const { name, description, price, category, stock } = req.body;
 
@@ -14,47 +13,45 @@ exports.createProduct = async (req, res) => {
       price,
       category,
       stock,
+
+      // Save uploaded image if there is one
       image: req.file ? `/uploads/${req.file.filename}` : "",
     });
 
     await product.save();
-
     res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// GET all products with optional search and category filter
 exports.getProducts = async (req, res) => {
   try {
     const { search, category } = req.query;
-
     const query = {};
 
+    // Search product name
     if (search) {
       query.name = { $regex: search, $options: "i" };
     }
 
+    // Filter by category
     if (category) {
       query.category = category;
     }
 
     const products = await Product.find(query);
-
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// UPDATE product
 exports.updateProduct = async (req, res) => {
   try {
-    const updateData = {
-      ...req.body,
-    };
+    const updateData = { ...req.body };
 
+    // Update image if a new file is uploaded
     if (req.file) {
       updateData.image = `/uploads/${req.file.filename}`;
     }
@@ -71,10 +68,14 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// DELETE product
 exports.deleteProduct = async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findByIdAndDelete(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
     res.json({ message: "Product deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });

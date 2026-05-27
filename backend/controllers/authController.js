@@ -1,44 +1,58 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
+// Create a login token that lasts for 30 days
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
+// Check if the email has a valid format
 const isValidEmail = (email) => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailPattern.test(email);
 };
 
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, phone, address, password } = req.body;
 
   try {
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Name, email, and password are required' });
+    // Check required fields
+    if (!name || !email || !phone || !address || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     if (!isValidEmail(email)) {
-      return res.status(400).json({ message: 'Please enter a valid email address' });
+      return res.status(400).json({ message: "Invalid email format" });
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+      return res.status(400).json({ message: "Password must be at least 6 chars" });
     }
 
+    // Check if email is already used
     const userExists = await User.findOne({ email });
-
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    const user = await User.create({ name, email, password });
+    // Create the new user
+    const user = await User.create({
+      name,
+      email,
+      phone,
+      address,
+      password,
+      role: "customer",
+    });
 
     res.status(201).json({
       id: user.id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
+      address: user.address,
+      role: user.role,
       token: generateToken(user.id),
     });
   } catch (error) {
@@ -51,13 +65,10 @@ const loginUser = async (req, res) => {
 
   try {
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+      return res.status(400).json({ message: "Email and password required" });
     }
 
-    if (!isValidEmail(email)) {
-      return res.status(400).json({ message: 'Please enter a valid email address' });
-    }
-
+    // Find user and check the password
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
@@ -65,10 +76,13 @@ const loginUser = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
+        address: user.address,
+        role: user.role || "customer",
         token: generateToken(user.id),
       });
     } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      res.status(401).json({ message: "Invalid credentials" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -77,20 +91,20 @@ const loginUser = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
+    // The logged-in user id comes from the auth middleware
     const user = await User.findById(req.user.id);
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json({
       name: user.name,
       email: user.email,
-      university: user.university,
+      phone: user.phone,
       address: user.address,
+      role: user.role || "customer",
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -98,15 +112,14 @@ const updateUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    const { name, email, university, address } = req.body;
+    const { name, email, phone, address } = req.body;
 
+    // Only update fields that were entered
     user.name = name || user.name;
     user.email = email || user.email;
-    user.university = university || user.university;
+    user.phone = phone || user.phone;
     user.address = address || user.address;
 
     const updatedUser = await user.save();
@@ -115,8 +128,9 @@ const updateUserProfile = async (req, res) => {
       id: updatedUser.id,
       name: updatedUser.name,
       email: updatedUser.email,
-      university: updatedUser.university,
+      phone: updatedUser.phone,
       address: updatedUser.address,
+      role: updatedUser.role || "customer",
       token: generateToken(updatedUser.id),
     });
   } catch (error) {
