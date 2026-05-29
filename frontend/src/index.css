@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Main page styles */
+
+body {
+  background-color: #f8fafc;
+  color: #1f2937;
+}
+
+/* Product cards */
+
+.product-card {
+  border-radius: 18px;
+  overflow: hidden;
+
+  /* Smooth hover effect */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.12) !important;
+}
+
+.product-image-wrapper {
+  height: 210px;
+  background: linear-gradient(135deg, #f0fdf4, #ecfeff);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image {
+  width: 100%;
+  height: 210px;
+
+  /* Keep image size balanced */
+  object-fit: cover;
+}
+
+.product-fallback-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-badge {
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+}
+
+/* Forms and buttons */
+
+.form-control,
+.form-select,
+.btn {
+
+  /* Rounded corners */
+  border-radius: 12px;
+}
+
+.btn-success {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.btn-success:hover {
+  background-color: #146c43;
+  border-color: #146c43;
+}
+
+/* Admin dashboard */
+
+.dashboard-card {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+}

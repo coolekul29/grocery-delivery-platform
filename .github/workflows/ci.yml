@@ -1,0 +1,36 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [develop, 'release/**', master]
+  pull_request:
+    branches: [develop, 'release/**', master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    # Uses the production environment variables for testing
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Install packages for all folders
+      - name: install deps
+        run: |
+          npm install
+          npm install --prefix backend
+          npm install --prefix frontend
+
+      - name: run tests
+        run: npm test -- --watchAll=false
+
+      # Prevent warnings from stopping the frontend build
+      - name: build frontend
+        run: CI=false npm run build --prefix frontend
