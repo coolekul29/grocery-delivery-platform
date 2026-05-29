@@ -10,7 +10,6 @@ const ProductForm = ({ products, setProducts, editingProduct, setEditingProduct 
     category: "",
     price: "",
     stock: "",
-    image: null,
   });
 
   useEffect(() => {
@@ -22,7 +21,6 @@ const ProductForm = ({ products, setProducts, editingProduct, setEditingProduct 
         category: editingProduct.category || "",
         price: editingProduct.price || "",
         stock: editingProduct.stock || "",
-        image: null,
       });
     } else {
       // Clear the form when adding a new product
@@ -32,18 +30,15 @@ const ProductForm = ({ products, setProducts, editingProduct, setEditingProduct 
         category: "",
         price: "",
         stock: "",
-        image: null,
       });
     }
   }, [editingProduct]);
 
   // Update form values while typing
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
     setFormData({
       ...formData,
-      [name]: files ? files[0] : value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -51,29 +46,18 @@ const ProductForm = ({ products, setProducts, editingProduct, setEditingProduct 
     e.preventDefault();
 
     try {
-      // Use FormData so image file can be uploaded
-      const productData = new FormData();
-
-      productData.append("name", formData.name);
-      productData.append("description", formData.description);
-      productData.append("category", formData.category);
-      productData.append("price", Number(formData.price));
-      productData.append("stock", Number(formData.stock));
-
-      if (formData.image) {
-        productData.append("image", formData.image);
-      }
+      // Change price and stock into numbers
+      const productData = {
+        ...formData,
+        price: Number(formData.price),
+        stock: Number(formData.stock),
+      };
 
       if (editingProduct) {
         // Update existing product
         const response = await axios.put(
           `${API_BASE_URL}/api/products/${editingProduct._id}`,
-          productData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+          productData
         );
 
         setProducts(
@@ -85,12 +69,7 @@ const ProductForm = ({ products, setProducts, editingProduct, setEditingProduct 
         // Add new product
         const response = await axios.post(
           `${API_BASE_URL}/api/products`,
-          productData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+          productData
         );
 
         setProducts([...products, response.data]);
@@ -104,13 +83,7 @@ const ProductForm = ({ products, setProducts, editingProduct, setEditingProduct 
         category: "",
         price: "",
         stock: "",
-        image: null,
       });
-
-      const imageInput = document.getElementById("productImageInput");
-      if (imageInput) {
-        imageInput.value = "";
-      }
     } catch (error) {
       console.error("Failed to save product:", error);
       alert("Failed to save product. Please try again.");
@@ -200,34 +173,6 @@ const ProductForm = ({ products, setProducts, editingProduct, setEditingProduct 
             rows="3"
           />
         </div>
-
-        <div className="col-12">
-          <label className="form-label fw-semibold">Product Image</label>
-          <input
-            type="file"
-            id="productImageInput"
-            name="image"
-            accept="image/png, image/jpeg, image/jpg"
-            onChange={handleChange}
-            className="form-control form-control-lg"
-          />
-        </div>
-
-        {editingProduct?.image && (
-          <div className="col-12">
-            <p className="text-muted mb-2">Current Image:</p>
-            <img
-              src={`${API_BASE_URL}${editingProduct.image}`}
-              alt={editingProduct.name}
-              style={{
-                width: "120px",
-                height: "120px",
-                objectFit: "cover",
-                borderRadius: "8px",
-              }}
-            />
-          </div>
-        )}
       </div>
 
       <div className="d-flex gap-3 mt-4">
