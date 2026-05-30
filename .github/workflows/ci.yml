@@ -1,17 +1,21 @@
 name: CI Pipeline
 
 on:
-  push:
-    branches: [develop, 'release/**', master]
   pull_request:
-    branches: [develop, 'release/**', master]
+    branches: 
+      - develop
+      - 'release/**'
+      - master
+  push:
+    branches:
+      - develop
+      - 'release/**'
+      - master
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    # Uses the production environment variables for testing
-    environment: production
 
     steps:
       - uses: actions/checkout@v4
@@ -38,7 +42,18 @@ jobs:
   deploy:
     needs: build
     runs-on: self-hosted
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
       - name: Deploy to EC2
-        run: echo "Deployment step will go here"
+        run: |
+          cd /home/ubuntu/grocery-delivery-platform
+          git pull origin master
+
+          npm install --prefix backend
+          npm install --prefix frontend
+          CI=false npm run build --prefix frontend
+
+          pm2 restart grocery-backend
+          pm2 restart grocery-frontend
+          pm2 save
