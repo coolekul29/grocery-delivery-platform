@@ -8,9 +8,11 @@
 
 # 1. Project Overview
 
-The Grocery Delivery Platform is a full-stack web application built using the MERN stack. The project was created for the IFQ636 Software Lifecycle Management assignment.
+The Grocery Delivery Platform is a full-stack web application built using the MERN stack (MongoDB, Express.js, React.js, and Node.js).
 
-The system allows customers to browse grocery products, add items to cart, place orders, and manage their account. It also includes an admin dashboard where administrators can manage products and customer orders.
+The system allows customers to browse grocery products, search and filter products, add items to a shopping cart, place orders, and manage their accounts. Administrators can manage products, upload product images, and update customer orders through a dedicated administration dashboard.
+
+The project was developed as part of IFQ636 Software Lifecycle Management and demonstrates software engineering practices including requirements analysis, UI/UX design, version control, CI/CD automation, cloud deployment, and project management.
 
 ---
 
@@ -18,18 +20,22 @@ The system allows customers to browse grocery products, add items to cart, place
 
 ## Customer Features
 
+- Register a new account
+- Login and logout securely
 - Browse grocery products
 - Search products by name
 - Filter products by category
-- Add and remove items from cart
-- Place grocery orders
-- Register and login
-- Update customer profile
+- Add products to cart
+- Remove products from cart
+- Place orders
+- View order confirmation
+- Update user profile
 
 ## Admin Features
 
 - Add new products
-- Update product details
+- Upload product images
+- Edit product details
 - Delete products
 - View customer orders
 - Update order status
@@ -42,8 +48,10 @@ The system allows customers to browse grocery products, add items to cart, place
 ## Frontend
 
 - React.js
-- Bootstrap
+- React Router
+- Bootstrap 5
 - Tailwind CSS
+- Axios
 
 ## Backend
 
@@ -51,45 +59,199 @@ The system allows customers to browse grocery products, add items to cart, place
 - Express.js
 - MongoDB Atlas
 - Mongoose
+- JWT Authentication
+- Multer (Image Upload)
 
 ## DevOps and Tools
 
 - GitHub
 - GitHub Actions
+- AWS EC2 Ubuntu
+- PM2
 - Jira
 - Figma
-- AWS EC2 Ubuntu Server
+- Postman
 
 ---
 
-# 4. Local Setup
+# 4. System Architecture
+
+- React Frontend
+- Express REST API
+- MongoDB Atlas
+
+---
+
+# 5. Git Branching Strategy
+
+- Feature Branch
+- Develop Branch
+- Release Branch
+- Master Branch
+
+---
+
+# 6. CI/CD Pipeline
+
+GitHub Actions is used to automate build validation and deployment.
+
+### Deployment Flow
+
+- Feature
+- Develop
+- Release
+- Master
+- GitHub Actions
+- AWS EC2 Deployment
+- PM2 Restart
+
+### Pipeline Activities
+
+- Install dependencies
+- Run automated validation
+- Build React frontend
+- Deploy latest code to AWS EC2
+- Restart backend service
+- Restart frontend service
+- Save PM2 process configuration
+
+---
+
+# 7. Local Setup
 
 ## 1. Clone the Repository
 
-```bash
 git clone https://github.com/coolekul29/grocery-delivery-platform.git
 cd grocery-delivery-platform
 
-# 5. Public Project URL
+## 2. Install Dependencies
 
-Frontend URL:
-http://YOUR-PUBLIC-IP:3000
+npm install
+npm install --prefix backend
+npm install --prefix frontend
 
-Backend API URL:
-http://YOUR-PUBLIC-IP:5001
+## 3. Configure Environment Variables
+
+### Backend (.env)
+
+PORT=5001
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+
+### Frontend (.env)
+
+REACT_APP_API_URL=http://localhost:5001/api
+
+## 4. Run the Application
+
+### Start Backend
+
+npm start --prefix backend
+
+### Start Frontend
+
+npm start --prefix frontend
 
 ---
 
-# 6. Test Login Details
+# 8. Public Project URL
+
+### Live Application
+
+http://YOUR-EC2-PUBLIC-IP/products
+
+Replace the URL above with your deployed AWS EC2 public IP address.
+
+---
+
+# 9. Test Login Details
 
 ## Admin Account
-Email: test4@test.com.au
-Password: test4test123
+
+Email : test4@test.com.au
+Password : test4test123
 
 ## Customer Account
-Email: test5@test.com.au
-Password: test5test123
 
-# 7. Deployment
+Email : test5@test.com.au
+Password : test5test123
 
-The application was deployed using AWS EC2 Ubuntu Server.
+---
+
+# 10. Deployment
+
+The application is deployed using:
+
+- AWS EC2 Ubuntu Server
+- MongoDB Atlas
+- GitHub Actions
+- GitHub Self-Hosted Runner
+- PM2 Process Manager
+
+PM2 is configured to automatically restart application services when the EC2 instance is restarted.
+
+---
+
+# 11. Project Structure
+
+grocery-delivery-platform
+    - backend
+        - config
+        - controllers
+        - middleware
+        - models
+        - routes
+        - uploads
+
+    - frontend
+        - public
+        - src
+        - build
+
+    - .github
+        - workflows
+    - README.md
+
+---
+
+# 12. Testing
+
+The following testing activities were completed:
+
+- User Authentication Testing
+- Product CRUD Testing
+- Product Image Upload Testing
+- Shopping Cart Testing
+- Order Management Testing
+- API Testing using Postman
+- GitHub Actions Pipeline Testing
+- AWS Deployment Testing
+
+---
+
+# 13. Project Artefacts
+
+This project includes:
+
+- Requirements Analysis
+- SysML Diagrams
+- Jira Project Board
+- User Stories
+- Figma UI/UX Prototype
+- GitHub Repository
+- CI/CD Pipeline
+- AWS Cloud Deployment
+
+---
+
+# 14. Author
+
+**Luke Azumbrado**
+
+Master of Information Technology (Computer Science)
+
+Queensland University of Technology (QUT)
+
+IFQ636 Software Lifecycle Management
+
+2026
