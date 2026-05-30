@@ -40,5 +40,15 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Deploy to EC2
-        run: echo "Deployment step will go here"
+    - name: Deploy to EC2
+      run: |
+        cd /home/ubuntu/grocery-delivery-platform
+        git pull origin master
+
+        npm install --prefix backend
+        npm install --prefix frontend
+        CI=false npm run build --prefix frontend
+
+        pm2 restart grocery-backend
+        pm2 restart grocery-frontend
+        pm2 save
