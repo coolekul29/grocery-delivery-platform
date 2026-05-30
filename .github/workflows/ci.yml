@@ -34,3 +34,11 @@ jobs:
       # Prevent warnings from stopping the frontend build
       - name: build frontend
         run: CI=false npm run build --prefix frontend
+  
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Deploy to EC2
+        run: echo "Deployment step will go here"
