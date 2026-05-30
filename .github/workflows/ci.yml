@@ -16,9 +16,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    # Uses the production environment variables for testing
-    environment: production
 
     steps:
       - uses: actions/checkout@v4
