@@ -24,30 +24,44 @@ const orderSchema = new mongoose.Schema(
         quantity: {
           type: Number,
           required: true,
-
-          // Quantity must be at least 1
           min: [1, "Quantity cannot be less than 1"],
         },
       },
     ],
 
+    // Final total amount after decorator discounts
     totalAmount: {
       type: Number,
       required: true,
     },
 
+    // Total discount applied to the whole order
+    discount: {
+      type: Number,
+      default: 0,
+    },
+
+    // Delivery fee for the whole order
+    deliveryFee: {
+      type: Number,
+      default: 5,
+    },
+
+    // List of discounts applied
+    appliedDiscounts: {
+      type: [String],
+      default: [],
+    },
+
     status: {
       type: String,
-
-      // Allowed order status values
       enum: ["Pending", "Processing", "Delivered", "Cancelled"],
-
       default: "Pending",
     },
   },
-
-  // Automatically adds createdAt and updatedAt
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 module.exports = mongoose.model("Order", orderSchema);
