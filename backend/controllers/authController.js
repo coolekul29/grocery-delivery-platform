@@ -2,6 +2,7 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const logger = require("../singleton/logger");
+const UserFactory = require("../factory/userFactory");
 
 // Create a login token that lasts for 30 days
 const generateToken = (id) => {
@@ -37,15 +38,17 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Create the new user
-    const user = await User.create({
+    // Create new user object using Factory Pattern
+    const newUser = UserFactory.createUser("customer", {
       name,
       email,
       phone,
       address,
       password,
-      role: "customer",
     });
+
+    // Save the new user to MongoDB
+    const user = await User.create(newUser);
 
     res.status(201).json({
       id: user.id,
