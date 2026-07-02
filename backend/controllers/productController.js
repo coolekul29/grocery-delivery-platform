@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const ProductPrototype = require("../prototype/productPrototype");
 
 exports.createProduct = async (req, res) => {
   try {
@@ -77,6 +78,28 @@ exports.deleteProduct = async (req, res) => {
     }
 
     res.json({ message: "Product deleted" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.cloneProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const prototype = new ProductPrototype(product);
+
+    const clonedProduct = prototype.clone({
+      name: `${product.name} Copy`,
+    });
+
+    const newProduct = await Product.create(clonedProduct);
+
+    res.status(201).json(newProduct);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
