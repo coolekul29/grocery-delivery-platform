@@ -1,26 +1,52 @@
 const Order = require("../models/Order");
 
+const {
+  OrderCost,
+  PromoDiscountDecorator,
+  StudentDiscountDecorator,
+  FreeDeliveryDecorator,
+} = require("../decorator/discountDecorator");
+
+// Create new order
 exports.createOrder = async (req, res) => {
   try {
-    const { items, totalAmount } = req.body;
+    const { items, totalAmount, promoCode, isStudent } = req.body;
 
-    // Create a new order
+    let orderCost = new OrderCost(totalAmount);
+
+    if (promoCode === "PROMO10") {
+      orderCost = new PromoDiscountDecorator(orderCost);
+    }
+
+    if (isStudent === true) {
+      orderCost = new StudentDiscountDecorator(orderCost);
+    }
+
+    if (totalAmount >= 50) {
+      orderCost = new FreeDeliveryDecorator(orderCost);
+    }
+
+    const finalCost = orderCost.calculate();
+
     const order = new Order({
       items,
-      totalAmount,
-      status: "Pending",
+      totalAmount: finalCost.total,
+      discount: finalCost.discount,
+      deliveryFee: finalCost.deliveryFee,
+      appliedDiscounts: finalCost.appliedDiscounts,
     });
 
     await order.save();
+
     res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+// Get all orders
 exports.getOrders = async (req, res) => {
   try {
-    // Show newest orders first
     const orders = await Order.find().sort({ createdAt: -1 });
 
     res.json(orders);
@@ -29,11 +55,11 @@ exports.getOrders = async (req, res) => {
   }
 };
 
+// Update order status
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
 
-    // Return the updated order
     const updatedOrder = await Order.findByIdAndUpdate(
       req.params.id,
       { status },
@@ -50,6 +76,7 @@ exports.updateOrderStatus = async (req, res) => {
   }
 };
 
+// Delete order
 exports.deleteOrder = async (req, res) => {
   try {
     const deletedOrder = await Order.findByIdAndDelete(req.params.id);
