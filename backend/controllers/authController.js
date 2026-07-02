@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const logger = require("../singleton/logger");
 
 // Create a login token that lasts for 30 days
 const generateToken = (id) => {
@@ -72,6 +73,12 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
+      
+      logger.log(
+      "LOGIN",
+      `${user.email} logged into the system`
+      );
+
       res.json({
         id: user.id,
         name: user.name,
