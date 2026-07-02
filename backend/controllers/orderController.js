@@ -8,6 +8,12 @@ const {
   FreeDeliveryDecorator,
 } = require("../decorator/discountDecorator");
 
+const {
+  OrderSubject,
+  AdminObserver,
+  ProcessingObserver,
+} = require("../observer/orderObserver");
+
 // Create new order
 exports.createOrder = async (req, res) => {
   try {
@@ -43,6 +49,13 @@ exports.createOrder = async (req, res) => {
     "ORDER",
     `New order created with total amount $${finalCost.total}`
     );
+
+    const orderSubject = new OrderSubject();
+
+    orderSubject.subscribe(new AdminObserver());
+    orderSubject.subscribe(new ProcessingObserver());
+
+    orderSubject.notify(order);
 
     res.status(201).json(order);
   } catch (error) {
