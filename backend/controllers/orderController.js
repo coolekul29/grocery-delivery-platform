@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+const logger = require("../singleton/logger");
 
 const {
   OrderCost,
@@ -37,6 +38,11 @@ exports.createOrder = async (req, res) => {
     });
 
     await order.save();
+
+    logger.log(
+    "ORDER",
+    `New order created with total amount $${finalCost.total}`
+    );
 
     res.status(201).json(order);
   } catch (error) {
