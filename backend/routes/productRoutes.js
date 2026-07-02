@@ -1,5 +1,7 @@
 const express = require("express");
 const upload = require("../middleware/uploadMiddleware");
+const adminProxy = require("../proxy/adminProxy");
+const { protect } = require("../middleware/authMiddleware");
 
 const {
   getProducts,
@@ -23,7 +25,7 @@ router.post("/", upload.single("image"), createProduct);
 router.put("/:id", upload.single("image"), updateProduct);
 
 // Delete a product
-router.delete("/:id", deleteProduct);
+router.delete("/:id", protect, adminProxy, deleteProduct);
 
 // Clone a product
 router.post("/:id/clone", cloneProduct);
