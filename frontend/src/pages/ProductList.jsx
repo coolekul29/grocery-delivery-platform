@@ -1,51 +1,63 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || "";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
+
+  // Search, Filter & Sort
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortBy, setSortBy] = useState("newest");
+
+  // Product categories
+  const categories = useMemo(
+    () => [
+      { value: "fruits", label: "Fruits" },
+      { value: "vegetables", label: "Vegetables" },
+      { value: "meat", label: "Meat" },
+      { value: "dairy", label: "Dairy" },
+      { value: "bakery", label: "Bakery" },
+    ],
+    []
+  );
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [searchTerm, selectedCategory]);
 
   const fetchProducts = async () => {
     try {
       setError("");
 
       const response = await axios.get(
-        "http://localhost:5001/api/products"
+        `${API_BASE_URL}/api/products`,
+        {
+          params: {
+            search: searchTerm || undefined,
+            category:
+              selectedCategory === "All"
+                ? undefined
+                : selectedCategory,
+          },
+        }
       );
 
       setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
-      setError("Unable to load products. Please try again later.");
+
+      setError(
+        "Unable to load products. Please try again later."
+      );
     }
   };
 
-  // Get unique categories
-  const categories = [
-    "All",
-    ...new Set(products.map((product) => product.category)),
-  ];
-
-  // Filter products by category
-  const filteredProducts =
-    selectedCategory === "All"
-      ? products
-      : products.filter(
-          (product) => product.category === selectedCategory
-        );
-
-  // Sort filtered products
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
+  // Sort products
+  const sortedProducts = [...products].sort((a, b) => {
     switch (sortBy) {
-      case "category":
-        return a.category.localeCompare(b.category);
-
       case "name":
         return a.name.localeCompare(b.name);
 
@@ -57,12 +69,10 @@ const ProductList = () => {
 
       case "newest":
       default:
-        // If createdAt exists
         if (a.createdAt && b.createdAt) {
           return new Date(b.createdAt) - new Date(a.createdAt);
         }
 
-        // MongoDB fallback
         return b._id.localeCompare(a._id);
     }
   });
@@ -71,10 +81,26 @@ const ProductList = () => {
     <div className="container mt-5">
       <h2 className="mb-4">Product Listings</h2>
 
-      {/* Filter and Sort */}
+      {/* Search, Filter & Sort */}
       <div className="row mb-4">
 
-        <div className="col-md-6">
+        {/* Search */}
+        <div className="col-md-4">
+          <label className="form-label fw-bold">
+            Search
+          </label>
+
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        {/* Category Filter */}
+        <div className="col-md-4">
           <label className="form-label fw-bold">
             Filter by Category
           </label>
@@ -82,20 +108,27 @@ const ProductList = () => {
           <select
             className="form-select"
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) =>
+              setSelectedCategory(e.target.value)
+            }
           >
+            <option value="All">
+              All Categories
+            </option>
+
             {categories.map((category) => (
               <option
-                key={category}
-                value={category}
+                key={category.value}
+                value={category.value}
               >
-                {category}
+                {category.label}
               </option>
             ))}
           </select>
         </div>
 
-        <div className="col-md-6">
+        {/* Sort */}
+        <div className="col-md-4">
           <label className="form-label fw-bold">
             Sort By
           </label>
@@ -103,7 +136,9 @@ const ProductList = () => {
           <select
             className="form-select"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) =>
+              setSortBy(e.target.value)
+            }
           >
             <option value="newest">
               Newest Products
@@ -111,10 +146,6 @@ const ProductList = () => {
 
             <option value="name">
               Name (A-Z)
-            </option>
-
-            <option value="category">
-              Category
             </option>
 
             <option value="priceLowHigh">
@@ -137,7 +168,7 @@ const ProductList = () => {
 
       {!error && sortedProducts.length === 0 ? (
         <div className="alert alert-info">
-          No products available.
+          No products found.
         </div>
       ) : (
         <div className="row">
@@ -150,7 +181,7 @@ const ProductList = () => {
 
                 {product.image && (
                   <img
-                    src={`http://localhost:5001${product.image}`}
+                    src={`${API_BASE_URL}${product.image}`}
                     alt={product.name}
                     className="card-img-top"
                     style={{
@@ -186,6 +217,7 @@ const ProductList = () => {
                   </p>
 
                 </div>
+
               </div>
             </div>
           ))}
