@@ -1,0 +1,376 @@
+{
+  "info": {
+    "_postman_id": "1aaee786-bb9a-44b1-b428-b43b02b3e69a",
+    "name": "Grocery Delivery Platform API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "46712861",
+    "_collection_link": "https://go.postman.co/collection/46712861-1aaee786-bb9a-44b1-b428-b43b02b3e69a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GET - /api/auth/profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{bearer_token_14ji}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5001/api/auth/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "auth",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - /api/auth/register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Test 8\",\r\n  \"email\": \"test8@test.com.au\",\r\n  \"phone\": \"0412345678\",\r\n  \"address\": \"Gold Coast\",\r\n  \"password\": \"test8123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5001/api/auth/register",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - /api/auth/login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"test8@test.com.au\",\r\n  \"password\": \"test8123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5001/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET - /api/products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5001/api/products",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - /api/products",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Kiwi",
+              "type": "text",
+              "uuid": "a64ea2d7-3179-4bdd-97d3-e1de8d7d0e37"
+            },
+            {
+              "key": "description",
+              "value": "Fresh Kiwi",
+              "type": "text",
+              "uuid": "2873554b-5722-4a0b-82e3-542baefdb396"
+            },
+            {
+              "key": "price",
+              "value": "5",
+              "type": "text",
+              "uuid": "92367711-aa5a-496d-8b57-aca65ff9fe6f"
+            },
+            {
+              "key": "category",
+              "value": "Fruit",
+              "type": "text",
+              "uuid": "fdba676e-522f-44f4-9e88-880704533f86"
+            },
+            {
+              "key": "stock",
+              "value": "150",
+              "type": "text",
+              "uuid": "f3f7e7bc-5f96-4bb7-8e95-2008c3ca6f52"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:5001/api/products",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PUT - /api/products/{id}",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Kiwi Fruit",
+              "type": "text",
+              "uuid": "aba49c0a-3e2f-4fe4-ac94-a2fd7566a7f9"
+            },
+            {
+              "key": "description",
+              "value": "Updated Kiwi",
+              "type": "text",
+              "uuid": "b1fdae63-a0fe-4e40-b8b9-cbf32638b21b"
+            },
+            {
+              "key": "price",
+              "value": "10",
+              "type": "text",
+              "uuid": "0723d990-ad8d-4fb8-afd2-a707ce791051"
+            },
+            {
+              "key": "category",
+              "value": "Fruit",
+              "type": "text",
+              "uuid": "8c26b617-277b-4b59-a7b7-44b3c5571db9"
+            },
+            {
+              "key": "stock",
+              "value": "200",
+              "type": "text",
+              "uuid": "494d1293-c664-4e3a-98e7-bb032d801e33"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:5001/api/products/6a47da0b73ea2bcba27e91ad",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "products",
+            "6a47da0b73ea2bcba27e91ad"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE - /api/product/{id} Customer Access",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{bearer_token_0m88}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5001/api/products/6a47dabb73ea2bcba27e91b1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "products",
+            "6a47dabb73ea2bcba27e91b1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE - /api/product/{id} Admin Access",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{json_web_token_0vzt}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5001/api/products/6a47dabb73ea2bcba27e91b1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "products",
+            "6a47dabb73ea2bcba27e91b1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - /api/products/{id}/clone",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5001/api/products/6a47da0b73ea2bcba27e91ad/clone",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "products",
+            "6a47da0b73ea2bcba27e91ad",
+            "clone"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - /api/orders",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"6a0946f5c90a784b98af6894\",\r\n      \"name\": \"Apple\",\r\n      \"price\": 15,\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"totalAmount\": 30\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5001/api/orders",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET - /api/orders",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5001/api/orders",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "bearer_token_14ji",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0vzt",
+      "secret": true
+    },
+    {
+      "key": "bearer_token_0m88",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_16wq",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0vzt",
+      "secret": true
+    }
+  ]
+}
