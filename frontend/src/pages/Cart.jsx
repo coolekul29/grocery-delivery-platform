@@ -26,6 +26,10 @@ function Cart({ cart, setCart }) {
     0
   );
 
+  // Delivery fee matches backend decorator rule
+  const deliveryFee = total >= 50 ? 0 : 5;
+  const finalTotal = total + deliveryFee;
+
   const removeItem = (id) => {
     const updatedCart = cart.filter((item) => item._id !== id);
     setCart(updatedCart);
@@ -219,8 +223,19 @@ function Cart({ cart, setCart }) {
                   </div>
 
                   <div className="d-flex justify-content-between mb-2">
+                    <span className="text-muted">Subtotal</span>
+                    <span className="fw-semibold">${total.toFixed(2)}</span>
+                  </div>
+
+                  <div className="d-flex justify-content-between mb-2">
                     <span className="text-muted">Delivery</span>
-                    <span className="fw-semibold text-success">Free</span>
+                    <span
+                      className={`fw-semibold ${
+                        deliveryFee === 0 ? "text-success" : "text-dark"
+                      }`}
+                    >
+                      {deliveryFee === 0 ? "Free" : `$${deliveryFee.toFixed(2)}`}
+                    </span>
                   </div>
 
                   <hr />
@@ -228,7 +243,7 @@ function Cart({ cart, setCart }) {
                   <div className="d-flex justify-content-between align-items-center mb-4">
                     <span className="fw-bold fs-5">Total</span>
                     <span className="fw-bold fs-4 text-success">
-                      ${total.toFixed(2)}
+                      ${finalTotal.toFixed(2)}
                     </span>
                   </div>
 

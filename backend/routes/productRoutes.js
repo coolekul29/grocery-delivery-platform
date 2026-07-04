@@ -1,21 +1,33 @@
 const express = require("express");
-const productController = require("../controllers/productController");
 const upload = require("../middleware/uploadMiddleware");
+const adminProxy = require("../proxy/adminProxy");
+const { protect } = require("../middleware/authMiddleware");
+
+const {
+  getProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  cloneProduct,
+} = require("../controllers/productController");
 
 const router = express.Router();
 
 /* Product routes */
 
 // Get all products
-router.get("/", productController.getProducts);
+router.get("/", getProducts);
 
 // Create a product with image upload
-router.post("/", upload.single("image"), productController.createProduct);
+router.post("/", upload.single("image"), createProduct);
 
 // Update product details or image
-router.put("/:id", upload.single("image"), productController.updateProduct);
+router.put("/:id", upload.single("image"), updateProduct);
 
 // Delete a product
-router.delete("/:id", productController.deleteProduct);
+router.delete("/:id", protect, adminProxy, deleteProduct);
+
+// Clone a product
+router.post("/:id/clone", cloneProduct);
 
 module.exports = router;

@@ -1,10 +1,34 @@
-import { useState, useEffect } from "react";
 import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "";
 
 const ProductListAdmin = ({ products, setProducts, setEditingProduct }) => {
   
+  const handleClone = async (productId) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/products/${productId}/clone`,
+      {
+        method: "POST",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to clone product.");
+    }
+
+    alert("Product cloned successfully.");
+
+    // Refresh the product list
+    setProducts([...products, data]);
+  } catch (error) {
+    console.error(error);
+    alert("Error cloning product.");
+  }
+};
+
   const handleDelete = async (productId) => {
     // Ask before deleting the product
     const confirmDelete = window.confirm(
@@ -82,6 +106,12 @@ const ProductListAdmin = ({ products, setProducts, setEditingProduct }) => {
               </td>
 
               <td className="text-end">
+                <button
+                  className="btn btn-outline-primary btn-sm me-2"
+                  onClick={() => handleClone(product._id)}
+                >
+                  Clone
+                </button>
                 <button
                   onClick={() => setEditingProduct(product)}
                   className="btn btn-outline-warning btn-sm me-2"
